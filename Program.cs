@@ -1,6 +1,8 @@
 using CompanyEmployees.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using NLog;
+using Repository;
 
 namespace CompanyEmployees
 {
@@ -12,11 +14,16 @@ namespace CompanyEmployees
 
             LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(),
                 "/nlog.config"));
+            
 
             // Add services to the container.
             builder.Services.ConfigureCors();
             builder.Services.ConfigureIISIntegration();
             builder.Services.ConfigureLoggerService();
+            builder.Services.AddDbContext<RepositoryContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("sqlConnection")));
+           // .MigrationsAssembly(typeof(RepositoryContext).Assembly.FullName));
+          
 
             builder.Services.AddControllers();
 
